@@ -1,0 +1,12 @@
+includes:
+    - ./vendor/worksome/coding-style/larastan.neon
+
+parameters:
+    paths:
+        - app
+
+    # The level 8 is the highest level
+    level: 8
+
+    ignoreErrors:
+        - '#^Illuminate\\Support\\Facades\\[a-zA-Z0-9\\_]+ facade should not be used\.$#'
