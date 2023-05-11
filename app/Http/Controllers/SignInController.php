@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SignInRequest;
 use App\Models\User;
+use Flugg\Responder\Contracts\Responder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
@@ -14,7 +15,7 @@ use Illuminate\Validation\ValidationException;
 
 class SignInController extends Controller
 {
-    public function __invoke(SignInRequest $request): JsonResponse
+    public function __invoke(SignInRequest $request, Responder $responder): JsonResponse
     {
         $validated = $request->validated();
 
@@ -29,9 +30,10 @@ class SignInController extends Controller
 
         $token = $user->createToken($validated['device_name'])->plainTextToken;
 
-        return response()->json([
+
+        return $responder->success([
             'token' => $token,
             'user' => $user->only(['id', 'name', 'email']),
-        ], Response::HTTP_CREATED);
+        ])->respond(Response::HTTP_CREATED);
     }
 }
