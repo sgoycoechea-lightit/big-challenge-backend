@@ -8,7 +8,8 @@ use App\Http\Requests\SignInRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class SignInController extends Controller
@@ -18,8 +19,9 @@ class SignInController extends Controller
         $validated = $request->validated();
 
         $user = User::where('email', $validated['email'])->first();
+        $credentials = Arr::only($validated, ['email', 'password']);
 
-        if (! $user || ! Hash::check($validated['password'], $user->password)) {
+        if (! $user || ! Auth::attempt($credentials)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
