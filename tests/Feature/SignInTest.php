@@ -37,11 +37,7 @@ it('can log a user in', function () {
 it('returns an unprocessable content status code when the data is invalid', function (array $body) {
     $this->postJson('api/login', $body)->assertUnprocessable();
 })->with([
-    'Empty body' => [[
-        'email' => '',
-        'password' => '',
-        'device_name' => '',
-    ]],
+    'Empty body' => [[ ]],
     'Missing email' => [[
         'password' => 'password',
         'device_name' => 'mobile',
