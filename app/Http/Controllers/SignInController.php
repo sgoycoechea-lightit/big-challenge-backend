@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SignInRequest;
 use App\Models\User;
+use App\Transformers\UserTransformer;
 use Flugg\Responder\Contracts\Responder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -31,9 +32,8 @@ class SignInController extends Controller
         $token = $user->createToken($validated['device_name'])->plainTextToken;
 
 
-        return $responder->success([
-            'token' => $token,
-            'user' => $user->only(['id', 'name', 'email']),
-        ])->respond(Response::HTTP_CREATED);
+        return $responder->success($user, UserTransformer::class)
+            ->meta(['token' => $token])
+            ->respond(Response::HTTP_CREATED);
     }
 }
