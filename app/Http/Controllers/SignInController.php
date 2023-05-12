@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\IncorrectCredentialsException;
 use App\Http\Requests\SignInRequest;
 use App\Models\User;
 use App\Transformers\UserTransformer;
@@ -13,7 +14,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
-class SignInController extends Controller
+class SignInController
 {
     public function __invoke(SignInRequest $request, Responder $responder): JsonResponse
     {
@@ -23,15 +24,13 @@ class SignInController extends Controller
         $credentials = Arr::only($validated, ['email', 'password']);
 
         if (! $user || ! Auth::attempt($credentials)) {
-            return response()
-                ->json(['error' => 'The provided credentials are incorrect.'], Response::HTTP_UNAUTHORIZED);
+            throw new IncorrectCredentialsException();
         }
 
         $token = $user->createToken($validated['device_name'])->plainTextToken;
 
-
         return $responder->success($user, UserTransformer::class)
             ->meta(['token' => $token])
-            ->respond(Response::HTTP_CREATED);
+            ->respond(Response::HTTP_OK);
     }
 }

@@ -31,7 +31,7 @@ it('can log a user in', function () {
         'device_name' => 'mobile',
     ];
     $response = $this->postJson('api/login', $userData);
-    $response->assertCreated();
+    $response->assertOk();
 });
 
 it('returns an unprocessable content status code when the data is invalid', function (array $body) {
