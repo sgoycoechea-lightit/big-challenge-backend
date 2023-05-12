@@ -11,23 +11,21 @@ use App\Transformers\UserTransformer;
 use Flugg\Responder\Contracts\Responder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 class SignInController
 {
     public function __invoke(SignInRequest $request, Responder $responder): JsonResponse
     {
-        $validated = $request->validated();
+        $credentials = $request->only(['email', 'password']);
 
-        $user = User::where('email', $validated['email'])->first();
-        $credentials = Arr::only($validated, ['email', 'password']);
+        $user = User::where('email', $credentials['email'])->first();
 
         if (! $user || ! Auth::attempt($credentials)) {
             throw new IncorrectCredentialsException();
         }
 
-        $token = $user->createToken($validated['device_name'])->plainTextToken;
+        $token = $user->createToken($request['device_name'])->plainTextToken;
 
         return $responder->success($user, UserTransformer::class)
             ->meta(['token' => $token])
