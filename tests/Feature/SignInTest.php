@@ -14,7 +14,7 @@ beforeEach(function () {
     ]);
 });
 
-it('returns an unauthorized status code when the user is invalid', function () {
+it('returns an unauthorized status code when the password is invalid', function () {
     $userData = [
         'email' => $this->user->email,
         'password' => 'invalid-password',
@@ -33,3 +33,30 @@ it('can log a user in', function () {
     $response = $this->postJson('api/login', $userData);
     $response->assertCreated();
 });
+
+it('returns an unprocessable content status code when the data is invalid', function (array $body) {
+    $this->postJson('api/login', $body)->assertUnprocessable();
+})->with([
+    'Empty body' => [[
+        'email' => '',
+        'password' => '',
+        'device_name' => '',
+    ]],
+    'Missing email' => [[
+        'password' => 'password',
+        'device_name' => 'mobile',
+    ]],
+    'Invalid email' => [[
+        'email' => 'invalid-email',
+        'password' => 'password',
+        'device_name' => 'mobile',
+    ]],
+    'Missing password' => [[
+        'email' => "test@example.com",
+        'device_name' => 'mobile',
+    ]],
+    'Missing device name' => [[
+        'email' => 'test@example.com',
+        'password' => 'password',
+    ]],
+]);

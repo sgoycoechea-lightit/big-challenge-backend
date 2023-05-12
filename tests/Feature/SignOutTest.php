@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use Database\Factories\UserFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Response;
 use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class);
@@ -12,5 +11,10 @@ uses(RefreshDatabase::class);
 it('can log a user out', function () {
     Sanctum::actingAs(UserFactory::new()->create());
     $response = $this->postJson('api/logout');
-    $response->assertStatus(Response::HTTP_OK);
+    $response->assertOk();
+});
+
+it('can not logout if it is not logged in', function () {
+    $response = $this->postJson('api/logout');
+    $response->assertUnauthorized();
 });
