@@ -12,7 +12,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 
 class SignInController extends Controller
 {
@@ -24,9 +23,8 @@ class SignInController extends Controller
         $credentials = Arr::only($validated, ['email', 'password']);
 
         if (! $user || ! Auth::attempt($credentials)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+            return response()
+                ->json(['error' => 'The provided credentials are incorrect.'], Response::HTTP_UNAUTHORIZED);
         }
 
         $token = $user->createToken($validated['device_name'])->plainTextToken;
