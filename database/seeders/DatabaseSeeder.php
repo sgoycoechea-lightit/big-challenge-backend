@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,9 +12,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::newFactory()->create([
+        UserFactory::new()->create([
              'name' => 'Santiago',
              'email' => 'test@example.com',
         ]);
+
+        $this->call(RoleSeeder::class);
     }
 }

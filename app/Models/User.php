@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * App\Models\User
@@ -26,6 +27,7 @@ class User extends Authenticatable
 {
     use HasApiTokens;
     use Notifiable;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
