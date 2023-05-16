@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\GetUserController;
 use App\Http\Controllers\SignInController;
 use App\Http\Controllers\SignOutController;
 use App\Http\Controllers\SignUpController;
+use App\Http\Controllers\UpdatePatientController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,10 +18,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+Route::post('/signup', SignUpController::class);
+Route::post('/login', SignInController::class);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/user', GetUserController::class);
+    Route::post('/logout', SignOutController::class);
+    Route::put('/update', UpdatePatientController::class);
 });
 
-Route::post('/login', SignInController::class);
-Route::post('/signup', SignUpController::class);
-Route::middleware('auth:sanctum')->post('/logout', SignOutController::class);
