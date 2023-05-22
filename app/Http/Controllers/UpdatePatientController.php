@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdatePatientRequest;
+use App\Models\Patient;
 use App\Transformers\UserTransformer;
 use Flugg\Responder\Contracts\Responder;
 use Illuminate\Http\JsonResponse;
@@ -16,7 +17,13 @@ class UpdatePatientController
     {
         /** @var \App\Models\User $user */
         $user = $request->user();
-        $user->update($request->validated());
+
+        $patient = $user->patient ?? new Patient();
+        $patient->fill($request->validated());
+        $patient->user()->associate($user);
+        $patient->save();
+        $user->refresh();
+
         return $responder->success($user, UserTransformer::class)->respond(Response::HTTP_OK);
     }
 }

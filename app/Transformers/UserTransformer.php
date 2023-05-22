@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Transformers;
 
-use App\Enums\UserRole;
 use App\Models\User;
 use Flugg\Responder\Transformers\Transformer;
 
@@ -33,29 +32,16 @@ class UserTransformer extends Transformer
     public function transform(User $user)
     {
         $role = $this->getUserRole($user);
-        $data = [
+        return [
             'id' => (int) $user->id,
             'name' => (string) $user->name,
             'email' => (string) $user->email,
             'role' => (string) $role,
+            'phone_number' => $user->patient ? ((string) $user->patient->phone_number) : null,
+            'weight' => $user->patient ? ((string) $user->patient->weight) : null,
+            'height' => $user->patient ? ((string) $user->patient->height) : null,
+            'other_information' => $user->patient ? ((string) $user->patient->other_information) : null,
         ];
-
-        if ($role === UserRole::PATIENT->value) {
-            if ($user->phone_number) {
-                $data['phone_number'] = (string) $user->phone_number;
-            }
-            if ($user->height) {
-                $data['height'] = (float) $user->height;
-            }
-            if ($user->weight) {
-                $data['weight'] = (float) $user->weight;
-            }
-            if ($user->other_information) {
-                $data['other_information'] = (string) $user->other_information;
-            }
-        }
-
-        return $data;
     }
 
     /**

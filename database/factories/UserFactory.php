@@ -31,7 +31,7 @@ class UserFactory extends Factory
         ];
     }
 
-    public function doctor()
+    public function doctor(): static
     {
         return $this->afterCreating(function (User $user) {
             Role::findOrCreate(UserRole::DOCTOR->value);
@@ -39,7 +39,7 @@ class UserFactory extends Factory
         });
     }
 
-    public function patient()
+    public function patient(): static
     {
         return $this->afterCreating(function (User $user) {
             $patientRole = Role::findOrCreate(UserRole::PATIENT->value);
@@ -49,16 +49,12 @@ class UserFactory extends Factory
         });
     }
 
-    public function withInformation()
+    public function withInformation(): static
     {
         return $this->afterCreating(function (User $user) {
-            $patientInformation = [
-                'phone_number' => '123456789',
-                'height' => 85,
-                'weight' => 80,
-                'other_information' => 'Some other information'
-            ];
-            $user->update($patientInformation);
+            PatientFactory::new()->create([
+                'user_id' => $user->id,
+            ]);
         });
     }
 
