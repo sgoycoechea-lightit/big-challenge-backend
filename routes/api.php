@@ -5,6 +5,7 @@ use App\Http\Controllers\SignInController;
 use App\Http\Controllers\SignOutController;
 use App\Http\Controllers\SignUpController;
 use App\Http\Controllers\UpdatePatientController;
+use App\Http\Controllers\StoreSubmissionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,8 +24,9 @@ Route::post('/signup', SignUpController::class);
 Route::post('/login', SignInController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/user', GetUserController::class);
     Route::post('/logout', SignOutController::class);
+    Route::get('/user', GetUserController::class);
     Route::put('/update', UpdatePatientController::class);
+    Route::post('/submissions', StoreSubmissionController::class);
 });
 

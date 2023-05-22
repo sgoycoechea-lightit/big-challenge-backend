@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\UserRole;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -66,5 +68,14 @@ class User extends Authenticatable
     public function patient(): HasOne
     {
         return $this->hasOne(Patient::class);
+    }
+
+    /**
+     * @return HasMany<Submission>
+     */
+    public function submissions(): HasMany
+    {
+        $foreingId = $this->hasRole(UserRole::Patient->value) ? 'patient_id' : 'doctor_id';
+        return $this->hasMany(Submission::class, $foreingId);
     }
 }
