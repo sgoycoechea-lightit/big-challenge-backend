@@ -2,8 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -21,9 +26,36 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
+    }
+
+    public function doctor(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            Role::findOrCreate(UserRole::DOCTOR->value);
+            $user->assignRole(UserRole::DOCTOR->value);
+        });
+    }
+
+    public function patient(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $patientRole = Role::findOrCreate(UserRole::PATIENT->value);
+            Permission::findOrCreate('update personal information');
+            $patientRole->givePermissionTo('update personal information');
+            $user->assignRole(UserRole::PATIENT->value);
+        });
+    }
+
+    public function withInformation(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            PatientFactory::new()->create([
+                'user_id' => $user->id,
+            ]);
+        });
     }
 
     /**

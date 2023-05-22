@@ -34,7 +34,6 @@ it('can sign up a user', function ($body) {
     ]],
 ]);
 
-
 it('returns an unprocessable content status code when the data is invalid', function (array $body) {
     $this->postJson('api/signup', $body)->assertUnprocessable();
     $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
