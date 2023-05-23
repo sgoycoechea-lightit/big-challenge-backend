@@ -9,8 +9,8 @@ use Spatie\Permission\Models\Role;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    Role::create(['name' => UserRole::PATIENT]);
-    Role::create(['name' => UserRole::DOCTOR]);
+    Role::create(['name' => UserRole::Patient]);
+    Role::create(['name' => UserRole::Doctor]);
 });
 
 it('can sign up a user', function ($body) {
@@ -23,14 +23,14 @@ it('can sign up a user', function ($body) {
         'password' => 'password',
         'password_confirmation' => 'password',
         'name' => 'John Doe',
-        'role' => UserRole::PATIENT,
+        'role' => UserRole::Patient,
     ]],
     'Doctor' => [[
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
         'name' => 'John Doe',
-        'role' => UserRole::DOCTOR,
+        'role' => UserRole::Doctor,
     ]],
 ]);
 
@@ -42,20 +42,20 @@ it('returns an unprocessable content status code when the data is invalid', func
     'Empty body' => [[ ]],
     'Missing email' => [[
         'name' => 'John Doe',
-        'role' => UserRole::PATIENT,
+        'role' => UserRole::Patient,
         'password' => 'password',
         'password_confirmation' => 'password',
     ]],
     'Invalid email' => [[
         'email' => 'invalid-email',
         'name' => 'John Doe',
-        'role' => UserRole::PATIENT,
+        'role' => UserRole::Patient,
         'password' => 'password',
         'password_confirmation' => 'password',
     ]],
     'Missing name' => [[
         'email' => 'test@example.com',
-        'role' => UserRole::PATIENT,
+        'role' => UserRole::Patient,
         'password' => 'password',
         'password_confirmation' => 'password',
     ]],
@@ -68,19 +68,19 @@ it('returns an unprocessable content status code when the data is invalid', func
     'Missing password' => [[
         'email' => 'test@example.com',
         'name' => 'John Doe',
-        'role' => UserRole::PATIENT,
+        'role' => UserRole::Patient,
         'password_confirmation' => 'password',
     ]],
     'Missing password confirmation' => [[
         'email' => 'test@example.com',
         'name' => 'John Doe',
-        'role' => UserRole::PATIENT,
+        'role' => UserRole::Patient,
         'password' => 'password',
     ]],
     'Wrong password confirmation' => [[
         'email' => 'test@example.com',
         'name' => 'John Doe',
-        'role' => UserRole::PATIENT,
+        'role' => UserRole::Patient,
         'password' => 'password',
         'password_confirmation' => 'password2',
     ]],
@@ -99,7 +99,7 @@ it('can not sign up a user with an email that is taken', function () {
         'password' => 'password',
         'password_confirmation' => 'password',
         'name' => 'John Doe',
-        'role' => UserRole::PATIENT,
+        'role' => UserRole::Patient,
     ];
     $response = $this->postJson('api/signup', $body);
     $response->assertCreated();

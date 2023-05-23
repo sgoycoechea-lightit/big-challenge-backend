@@ -13,7 +13,7 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::findOrCreate(UserRole::DOCTOR->value);
-        Role::findOrCreate(UserRole::PATIENT->value);
+        Role::findOrCreate(UserRole::Doctor->value);
+        Role::findOrCreate(UserRole::Patient->value);
     }
 }

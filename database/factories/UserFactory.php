@@ -34,18 +34,22 @@ class UserFactory extends Factory
     public function doctor(): static
     {
         return $this->afterCreating(function (User $user) {
-            Role::findOrCreate(UserRole::DOCTOR->value);
-            $user->assignRole(UserRole::DOCTOR->value);
+            Role::findOrCreate(UserRole::Doctor->value);
+            $user->assignRole(UserRole::Doctor->value);
         });
     }
 
     public function patient(): static
     {
         return $this->afterCreating(function (User $user) {
-            $patientRole = Role::findOrCreate(UserRole::PATIENT->value);
+            $patientRole = Role::findOrCreate(UserRole::Patient->value);
+            $user->assignRole(UserRole::Patient->value);
+
             Permission::findOrCreate('update personal information');
             $patientRole->givePermissionTo('update personal information');
-            $user->assignRole(UserRole::PATIENT->value);
+
+            Permission::findOrCreate('create submissions');
+            $patientRole->givePermissionTo('create submissions');
         });
     }
 

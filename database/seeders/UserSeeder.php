@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Database\Factories\PatientFactory;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Seeder;
 
