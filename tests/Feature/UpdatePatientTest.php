@@ -46,7 +46,7 @@ it('can update a patients info', function ($body) {
 
     $response = $this->putJson('api/update', $body);
     $response->assertOk();
-    $this->assertDatabaseHas('users', $body);
+    $this->assertDatabaseHas('patients', $body);
 })->with([
     'With other info' => [[
         'phone_number' => '123456789',
