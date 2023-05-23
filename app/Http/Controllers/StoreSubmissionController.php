@@ -19,7 +19,7 @@ class StoreSubmissionController
         $user = $request->user();
         $data = $request->validated();
         $data['status'] = SubmissionStatus::Pending->value;
-        $submission = $user->submissions()->create($data);
+        $submission = $user->patient?->submissions()->create($data);
         return $responder->success($submission, SubmissionTransformer::class)->respond(Response::HTTP_CREATED);
     }
 }

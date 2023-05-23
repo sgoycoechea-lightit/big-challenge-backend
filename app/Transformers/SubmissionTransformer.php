@@ -38,7 +38,7 @@ class SubmissionTransformer extends Transformer
             'symptoms' => (string) $submission->symptoms,
             'status' => (string) $submission->status->value,
             'doctor' => $this->transformUser($submission->doctor),
-            'patient' => $this->transformUser($submission->patient),
+            'patient' => $this->transformUser($submission->patient?->user),
         ];
     }
 

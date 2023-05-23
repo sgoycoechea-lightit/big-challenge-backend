@@ -17,7 +17,9 @@ class StoreSubmissionRequest extends FormRequest
     {
         /** @var \App\Models\User $user */
         $user = $this->user();
-        return $user->can('create submissions');
+        $hasCompletedInformation = $user->patient != null;
+
+        return $user->can('create submissions') && $hasCompletedInformation;
     }
 
     /**
@@ -36,6 +38,6 @@ class StoreSubmissionRequest extends FormRequest
     protected function failedAuthorization()
     {
         throw new AuthorizationException('This action is unauthorized. User must be of type:'
-        . strtolower(UserRole::Patient->value) . ' in order to create submissions');
+        . strtolower(UserRole::Patient->value) . ' and have updated their profile in order to create submissions');
     }
 }

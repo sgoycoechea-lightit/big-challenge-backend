@@ -8,20 +8,27 @@ use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class);
 
-it('can not create a submission it is not logged in', function () {
+it('can not create a submission if it is not logged in', function () {
     $response = $this->postJson('api/submissions', []);
     $response->assertUnauthorized();
 });
 
-it('can not create a submission it is not a patient', function () {
+it('can not create a submission if it is not a patient', function () {
     $doctor = UserFactory::new()->doctor()->create();
     $this->actingAs($doctor);
     $response = $this->postJson('api/submissions', []);
     $response->assertForbidden();
 });
 
+it('can not create a submission if the patient hasnt completed their information', function () {
+    $incompletePatient = UserFactory::new()->patient()->create();
+    $this->actingAs($incompletePatient);
+    $response = $this->postJson('api/submissions', []);
+    $response->assertForbidden();
+});
+
 it('can not create a submission if the title or the symptoms are missing', function ($body) {
-    $patient = UserFactory::new()->patient()->create();
+    $patient = UserFactory::new()->patient()->withInformation()->create();
     $this->actingAs($patient);
     $response = $this->postJson('api/submissions', $body);
     $response->assertUnprocessable();
@@ -35,7 +42,7 @@ it('can not create a submission if the title or the symptoms are missing', funct
 ]);
 
 it('can create a submission', function () {
-    $patient = UserFactory::new()->patient()->create();
+    $patient = UserFactory::new()->patient()->withInformation()->create();
     Sanctum::actingAs($patient);
 
     $body = [
