@@ -39,6 +39,7 @@ class SubmissionTransformer extends Transformer
             'status' => (string) $submission->status->value,
             'doctor' => $this->transformUser($submission->doctor),
             'patient' => $this->transformUser($submission->patient?->user),
+            'created_at' => (string) $submission->created_at,
         ];
     }
 
