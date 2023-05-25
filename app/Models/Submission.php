@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\SubmissionStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -26,6 +27,18 @@ class Submission extends Model
     protected $casts = [
         'status' => SubmissionStatus::class,
     ];
+
+    /**
+     * @param Builder<Submission> $query
+     *
+     * @return Builder<Submission>
+     */
+    public function scopeStatus(Builder $query, string $status): Builder
+    {
+        return $query->when($status, function ($query, $status) {
+            return $query->where('status', $status);
+        });
+    }
 
     /**
      * @return BelongsTo<Patient, Submission>

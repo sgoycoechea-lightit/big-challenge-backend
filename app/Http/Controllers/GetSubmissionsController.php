@@ -16,7 +16,11 @@ class GetSubmissionsController
     {
         /** @var \App\Models\User $user */
         $user = $request->user();
-        $submissions = $user->patient?->submissions()->paginate() ?? [];
+
+        $submissions = $user->patient?->submissions()
+            ->status($request->input('status'))
+            ->paginate() ?? [];
+
         return $responder->success($submissions, SubmissionTransformer::class)->respond(Response::HTTP_OK);
     }
 }
