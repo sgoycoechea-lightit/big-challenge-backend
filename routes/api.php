@@ -7,6 +7,7 @@ use App\Http\Controllers\SignUpController;
 use App\Http\Controllers\UpdatePatientController;
 use App\Http\Controllers\StoreSubmissionController;
 use App\Http\Controllers\GetSubmissionsController;
+use App\Http\Controllers\GetSubmissionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +32,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('/submissions')->group(function () {
         Route::get('/', GetSubmissionsController::class);
         Route::post('/', StoreSubmissionController::class);
+        Route::get('/{submission}', GetSubmissionController::class);
     });
 });
 
