@@ -7,6 +7,7 @@ use Database\Factories\SubmissionFactory;
 use Database\Factories\UserFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 
 uses(RefreshDatabase::class);
 
@@ -45,38 +46,23 @@ it('can return a patients submissions', function () {
 });
 
 it('can filter patient submissions by status', function ($status) {
-    $numberOfSubmissions = [
-        SubmissionStatus::Pending->value => 1,
-        SubmissionStatus::InProgress->value => 3,
-        SubmissionStatus::Done->value => 5,
-    ];
-
+    $numberOfSubmissionsPerType = 3;
     $user = UserFactory::new()->patient()->withInformation()->create();
     Sanctum::actingAs($user);
 
     SubmissionFactory::new()
-        ->count($numberOfSubmissions[SubmissionStatus::Pending->value])
+        ->count($numberOfSubmissionsPerType * 3)
+        ->sequence(
+            ['status' => SubmissionStatus::Pending->value],
+            ['status' => SubmissionStatus::InProgress->value],
+            ['status' => SubmissionStatus::Done->value],
+        )
         ->create([
             'patient_id' => $user->patient->id,
-            'status' => SubmissionStatus::Pending->value
-        ]);
-
-    SubmissionFactory::new()
-        ->count($numberOfSubmissions[SubmissionStatus::InProgress->value])
-        ->create([
-            'patient_id' => $user->patient->id,
-            'status' => SubmissionStatus::InProgress->value
-        ]);
-
-    SubmissionFactory::new()
-        ->count($numberOfSubmissions[SubmissionStatus::Done->value])
-        ->create([
-            'patient_id' => $user->patient->id,
-            'status' => SubmissionStatus::Done->value
         ]);
 
     $response = $this->getJson("api/submissions?status={$status}");
-    $response->assertSuccessful()->assertJsonCount($numberOfSubmissions[$status], 'data');
+    $response->assertSuccessful()->assertJsonCount($numberOfSubmissionsPerType, 'data');
 })->with([
     SubmissionStatus::Pending->value,
     SubmissionStatus::InProgress->value,
