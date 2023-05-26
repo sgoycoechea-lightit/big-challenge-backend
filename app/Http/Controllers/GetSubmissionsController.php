@@ -18,7 +18,7 @@ class GetSubmissionsController
         $user = $request->user();
 
         $submissions = $user->patient?->submissions()
-            ->status($request->input('status'))
+            ->status($request->input('status') ?? '')
             ->paginate() ?? [];
 
         return $responder->success($submissions, SubmissionTransformer::class)->respond(Response::HTTP_OK);

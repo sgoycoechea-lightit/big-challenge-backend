@@ -44,41 +44,41 @@ it('can return a patients submissions', function () {
     $response->assertSuccessful()->assertJsonCount($numberOfSubmissions * 2, 'data');
 });
 
-it('can filter patient submissions by status', function () {
-    $numberOfPendingSubmissions = 1;
-    $numberOfInProgressSubmissions = 3;
-    $numberOfDoneSubmissions = 5;
+it('can filter patient submissions by status', function ($status) {
+    $numberOfSubmissions = [
+        SubmissionStatus::Pending->value => 1,
+        SubmissionStatus::InProgress->value => 3,
+        SubmissionStatus::Done->value => 5,
+    ];
 
     $user = UserFactory::new()->patient()->withInformation()->create();
     Sanctum::actingAs($user);
 
     SubmissionFactory::new()
-        ->count($numberOfPendingSubmissions)
+        ->count($numberOfSubmissions[SubmissionStatus::Pending->value])
         ->create([
             'patient_id' => $user->patient->id,
             'status' => SubmissionStatus::Pending->value
         ]);
 
     SubmissionFactory::new()
-        ->count($numberOfInProgressSubmissions)
+        ->count($numberOfSubmissions[SubmissionStatus::InProgress->value])
         ->create([
             'patient_id' => $user->patient->id,
             'status' => SubmissionStatus::InProgress->value
         ]);
 
     SubmissionFactory::new()
-        ->count($numberOfDoneSubmissions)
+        ->count($numberOfSubmissions[SubmissionStatus::Done->value])
         ->create([
             'patient_id' => $user->patient->id,
             'status' => SubmissionStatus::Done->value
         ]);
 
-    $response = $this->getJson("api/submissions?status=PENDING");
-    $response->assertSuccessful()->assertJsonCount($numberOfPendingSubmissions, 'data');
-
-    $response = $this->getJson("api/submissions?status=IN_PROGRESS");
-    $response->assertSuccessful()->assertJsonCount($numberOfInProgressSubmissions, 'data');
-
-    $response = $this->getJson("api/submissions?status=DONE");
-    $response->assertSuccessful()->assertJsonCount($numberOfDoneSubmissions, 'data');
-});
+    $response = $this->getJson("api/submissions?status={$status}");
+    $response->assertSuccessful()->assertJsonCount($numberOfSubmissions[$status], 'data');
+})->with([
+    SubmissionStatus::Pending->value,
+    SubmissionStatus::InProgress->value,
+    SubmissionStatus::Done->value,
+]);
