@@ -10,8 +10,8 @@ use Laravel\Sanctum\Sanctum;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->patient = UserFactory::new()->patient()->withInformation()->create();
-    $this->submission = SubmissionFactory::new()->create(['patient_id' => $this->patient->id]);
+    $this->user = UserFactory::new()->patient()->withInformation()->create();
+    $this->submission = SubmissionFactory::new()->create(['patient_id' => $this->user->patient->id]);
 });
 
 it('can not get a submission if it is not logged in', function () {
@@ -27,7 +27,7 @@ it('can not return a submission if the patient is not its owner', function () {
 });
 
 it('can return a patients submission', function () {
-    Sanctum::actingAs($this->patient);
+    Sanctum::actingAs($this->user);
     $response = $this->getJson("api/submissions/{$this->submission->id}");
     $response->assertSuccessful();
 });
